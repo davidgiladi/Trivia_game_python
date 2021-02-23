@@ -33,14 +33,17 @@ def build_message(cmd, data):
 	Gets command name (str) and data field (str) and creates a valid protocol message
 	Returns: str, or None if error occured
 	"""
-    # Implement code ...
+
 	if (len(cmd) > CMD_FIELD_LENGTH or len (data) > MAX_DATA_LENGTH):
 		return None
 
 	fill_blank_str = 16 -len(cmd)
 	blank_str = " "*fill_blank_str
-	fill_blank_zero = 4- number_of_characters(data)
+	fill_blank_zero = 4 - number_of_characters(data)
 	blank_zero = "0"*fill_blank_zero
+	if (number_of_characters(data) == 0):
+		full_msg = cmd + blank_str + "|" + blank_zero + "|"
+		return full_msg
 	str_number = str(len(data))
 	full_msg = cmd + blank_str +"|"+ blank_zero + str_number +"|"+ data
 
@@ -65,14 +68,39 @@ def number_of_characters(data):
 
 	return i
 def parse_message(data):
+
 	"""
 	Parses protocol message and returns command name and data field
 	Returns: cmd (str), data (str). If some error occured, returns None, None
 	"""
-    # Implement code ...
 
-    # The function should return 2 values
-   # return cmd, msg
+	if (len (data) == 0):
+		return None, None
+
+	listdata = data.split('|')
+
+	if (len(listdata)>2):
+
+		number = listdata[1]
+		print (number)
+		cmd = listdata[0]
+		cmd = cmd.replace(" ", "")
+		msg = listdata [2]
+		number = int(listdata[1])
+
+		if (number < 0 ):
+			return None,None
+		if (cheek_number_equal_str(number,listdata [2])):
+			return None, None
+
+		return cmd,msg
+
+	return None,None
+
+def cheek_number_equal_str (number ,data):
+	if (number != len(data)):
+		return True
+	return False
 
 	
 def split_data(msg, expected_fields):
@@ -81,25 +109,25 @@ def split_data(msg, expected_fields):
 	using protocol's data field delimiter (|#) and validates that there are correct number of fields.
 	Returns: list of fields if all ok. If some error occured, returns None
 	"""
-	# Implement code ...
 
 
-	listdate = msg.split("#")
 
-	if (len(listdate) == expected_fields + 1):
-		return listdate
+	listdata = msg.split("#")
+
+	if (len(listdata) == expected_fields + 1):
+		return listdata
 	else:
-		for i in range(len(listdate)):
-			listdate[i] = None
+		for i in range(len(listdata)):
+			listdata[i] = None
 
-	return listdate
+	return listdata
 
 def join_data(msg_fields):
 	"""
 	Helper method. Gets a list, joins all of it's fields to one string divided by the data delimiter. 
 	Returns: string that looks like cell1#cell2#cell3
 	"""
-	# Implement code ...
+
 	if (msg_fields[0] != None):
 		msg = "#".join(msg_fields)
 		return msg
@@ -110,6 +138,12 @@ if __name__ == '__main__':
 	print(type(msg))
 	expected_fields = 3
 
-	print (build_message("LOGhgjhghjgjhghjghjgjhIN ", "aaaa#bbbb"))
+	str = build_message("LadadshIN ","aaaa#bbbb")
+	print (str)
+	print (parse_message("LOGIN           |	 -4|data"))
+	i = 'z'
+	print (isinstance(i, int))
+
+
 
 
